@@ -1,6 +1,7 @@
 package com.segmentationfault.huceng.usecases.signup.controller;
 
 import com.segmentationfault.huceng.entity.PendingUser;
+import com.segmentationfault.huceng.usecases.signup.dto.ApproveUserRequest;
 import com.segmentationfault.huceng.usecases.signup.dto.PendingUserRequest;
 import com.segmentationfault.huceng.usecases.signup.service.SignupService;
 import lombok.RequiredArgsConstructor;
@@ -33,7 +34,7 @@ public class SignupController {
     }
 
     @PostMapping("/approve") //api/signup/approve
-    public void approveUser() {
-
+    public void approveUser(@RequestBody ApproveUserRequest approveUserRequest) {
+        signupService.approveUser(approveUserRequest.getUsername());
     }
 }

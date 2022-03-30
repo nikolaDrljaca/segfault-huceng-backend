@@ -2,9 +2,11 @@ package com.segmentationfault.huceng.security;
 
 import com.segmentationfault.huceng.security.filter.CustomAuthenticationFilter;
 import com.segmentationfault.huceng.security.filter.CustomAuthorizationFilter;
+import com.segmentationfault.huceng.util.RoleUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -40,7 +42,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
         http.authorizeRequests().antMatchers("/api/login/**").permitAll(); // this will not secure any path you specify
         http.authorizeRequests().antMatchers("/api/signup").permitAll();
-        http.authorizeRequests().antMatchers("/api/signup/approve").permitAll();
+        http.authorizeRequests().antMatchers(HttpMethod.POST,"/api/signup/approve").hasAnyAuthority(RoleUtil.ROLE_ADMIN);
         //--------------
 
         //--------------

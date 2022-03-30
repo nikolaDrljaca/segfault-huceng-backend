@@ -1,5 +1,6 @@
 package com.segmentationfault.huceng.usecases.signup.service;
 
+import com.segmentationfault.huceng.entity.AppUser;
 import com.segmentationfault.huceng.entity.PendingUser;
 import com.segmentationfault.huceng.entity.Role;
 import com.segmentationfault.huceng.entity.repository.AppUserRepository;
@@ -8,6 +9,7 @@ import com.segmentationfault.huceng.entity.repository.RoleRepository;
 import com.segmentationfault.huceng.exception.UsernameAlreadyExists;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -22,6 +24,7 @@ public class SignupServiceImpl implements SignupService {
     private final PendingUserRepository pendingUserRepository;
     private final AppUserRepository appUserRepository;
     private final RoleRepository roleRepository;
+    private final BCryptPasswordEncoder encoder;
 
 
     @Override
@@ -43,7 +46,18 @@ public class SignupServiceImpl implements SignupService {
      */
     @Override
     public void approveUser(String username) {
-
+        PendingUser pendingUser = pendingUserRepository.findPendingUserByUsername(username).orElseThrow();
+        AppUser appUser = new AppUser(
+                null,
+                pendingUser.getFirstName(),
+                pendingUser.getLastName(),
+                pendingUser.getEmail(),
+                pendingUser.getUsername(),
+                encoder.encode(pendingUser.getPassword()),
+                pendingUser.getRoles()
+        );
+        appUserRepository.save(appUser);
+        pendingUserRepository.delete(pendingUser);
     }
 
     @Override
